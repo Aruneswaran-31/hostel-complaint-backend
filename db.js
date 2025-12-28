@@ -1,18 +1,22 @@
 const mysql = require("mysql2");
 
+// ❌ Comment out actual DB connection for now
+/*
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "root",        // put your MySQL password
+  password: "",
   database: "hostel_db"
 });
 
-db.connect((err) => {
-  if (err) {
-    console.error("Database connection failed:", err);
-  } else {
-    console.log("MySQL connected successfully");
-  }
+db.connect(err => {
+  if (err) throw err;
+  console.log("MySQL Connected");
 });
+*/
 
-module.exports = db;
+module.exports = {
+  query: () => {
+    throw new Error("Database not configured yet");
+  }
+};
