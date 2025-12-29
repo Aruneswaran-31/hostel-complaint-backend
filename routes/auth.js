@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-// MOCK LOGIN
 router.post("/login", (req, res) => {
   const { email, password } = req.body;
 
