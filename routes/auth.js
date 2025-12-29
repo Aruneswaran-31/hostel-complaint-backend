@@ -5,6 +5,11 @@ const db = require("../db");
 
 const router = express.Router();
 
+if (process.env.RENDER) {
+  module.exports = require("express").Router();
+  return;
+}
+
 /* REGISTER */
 router.post("/register", async (req, res) => {
   const { name, email, password, role } = req.body;
