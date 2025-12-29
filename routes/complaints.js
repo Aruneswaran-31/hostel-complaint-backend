@@ -1,51 +1,45 @@
 const express = require("express");
-const db = require("../db");
-const auth = require("../middleware/authMiddleware");
-
 const router = express.Router();
 
-/* CREATE COMPLAINT (STUDENT) */
-router.post("/", auth, (req, res) => {
+// In-memory complaints (mock DB)
+let complaints = [];
+
+// Student submits complaint
+router.post("/", (req, res) => {
   const { category, description } = req.body;
 
-  const sql =
-    "INSERT INTO complaints (user_id, category, description, status) VALUES (?, ?, ?, ?)";
+  if (!category || !description) {
+    return res.status(400).json({ message: "Missing fields" });
+  }
 
-  db.query(
-    sql,
-    [req.user.id, category, description, "Pending"],
-    (err) => {
-      if (err) {
-        return res.status(500).json({ message: "Complaint failed" });
-      }
-      res.json({ message: "Complaint submitted successfully" });
-    }
-  );
+  const newComplaint = {
+    id: Date.now(),
+    category,
+    description,
+    status: "Pending",
+  };
+
+  complaints.push(newComplaint);
+
+  res.json({ message: "Complaint submitted successfully" });
 });
 
-/* VIEW ALL COMPLAINTS (ADMIN) */
-router.get("/", auth, (req, res) => {
-  db.query(
-    `SELECT complaints.*, users.name 
-     FROM complaints 
-     JOIN users ON complaints.user_id = users.id`,
-    (err, results) => {
-      res.json(results);
-    }
-  );
+// Admin fetches all complaints
+router.get("/", (req, res) => {
+  res.json(complaints);
 });
 
-/* UPDATE STATUS (ADMIN) */
-router.put("/:id", auth, (req, res) => {
-  const { status } = req.body;
+// Admin resolves complaint
+router.put("/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const complaint = complaints.find(c => c.id === id);
 
-  db.query(
-    "UPDATE complaints SET status = ? WHERE id = ?",
-    [status, req.params.id],
-    () => {
-      res.json({ message: "Status updated successfully" });
-    }
-  );
+  if (!complaint) {
+    return res.status(404).json({ message: "Complaint not found" });
+  }
+
+  complaint.status = "Resolved";
+  res.json({ message: "Complaint resolved" });
 });
 
 module.exports = router;
