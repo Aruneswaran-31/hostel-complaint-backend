@@ -1,22 +1,14 @@
-const mysql = require("mysql2");
+let db = null;
 
-// ❌ Comment out actual DB connection for now
-/*
-const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "hostel_db"
-});
-
-db.connect(err => {
-  if (err) throw err;
-  console.log("MySQL Connected");
-});
-*/
+if (process.env.DATABASE_URL) {
+  // Future: cloud DB
+  console.log("Cloud database configured");
+} else {
+  console.log("No database configured. Running without DB.");
+}
 
 module.exports = {
   query: () => {
-    throw new Error("Database not configured yet");
+    throw new Error("Database not configured");
   }
 };
